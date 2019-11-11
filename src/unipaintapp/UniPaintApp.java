@@ -31,7 +31,6 @@ public class UniPaintApp extends JFrame{
     private Color[] lineColour = new Color[maxLineCount];
     private int[][] lxy = new int[maxLineCount][4];
    
-    private int pointStartX,pointStartY,pointEndX,pointEndY;
     
     //rectangle
     private final int maxRectangles = 10;
@@ -189,6 +188,7 @@ public class UniPaintApp extends JFrame{
         add(menuBar, BorderLayout.PAGE_START);
 
         pack();
+        updateMsgBox();
         setVisible(true);
     }
 
@@ -318,20 +318,21 @@ public class UniPaintApp extends JFrame{
     class RadioButtonListener implements ActionListener {
    //     @Override
         public void actionPerformed(ActionEvent e) {
+            updateMsgBox();
             if (lineRadioButton.isSelected()) {
                 drawingTool = "Line";
-                //msgBox.append(drawingTool);
+                msgBox.append(drawingTool+" Has been selected.");
             } else if (rectangleRadioButton.isSelected()) {
                 drawingTool = "Rectangle";
-               // msgBox.append(drawingTool);
+                msgBox.append(drawingTool+" Has been selected.");
             } else if (circleRadioButton.isSelected()) {
                 drawingTool = "Circle";
-               // msgBox.append(drawingTool);
+                msgBox.append(drawingTool+" Has been selected.");
             } else {
                 drawingTool = "Freehand";
-               //  msgBox.append(drawingTool);
+                 msgBox.append(drawingTool+" Has been selected.");
             }
-           
+          
         }
     }
 
@@ -349,9 +350,18 @@ public class UniPaintApp extends JFrame{
     class ClearButtonListener implements ActionListener {
         //@Override
         public void actionPerformed(ActionEvent e) {
-            canvas.repaint();
-            freehandPixelCount = 0;
+           
+            
+            lxy = null;
+            lxy = new int[maxLineCount][4];
             currentLineCount = 0;
+            
+            fxy = null;
+            fxy = new int[maxFreehandPixels][3];
+            freehandPixelCount = 0;
+            
+            updateMsgBox();
+            canvas.repaint();
         }
     }
 
@@ -361,16 +371,18 @@ public class UniPaintApp extends JFrame{
         fxy[freehandPixelCount][1] = e.getY();// y coordinate
         fxy[freehandPixelCount][2] = freehandThickness; //dimension
         freehandPixelCount++;
-        msgBox.setText("");
-        msgBox.append("Remaining Pixels: "+(maxFreehandPixels-freehandPixelCount));
+        updateMsgBox();
+   
     }
     
+    //requires exception handling
     public void drawLinePress(MouseEvent e, Color selectedColour){
         if (currentLineCount<maxLineCount){
-            lineColour[maxLineCount]= selectedColour;
+            lineColour[currentLineCount]= selectedColour;
             lxy[currentLineCount][0] = e.getX();
             lxy[currentLineCount][1] = e.getY();
         } else{
+            msgBox.append("Limit Reached\n");
         }
     }
  
@@ -378,7 +390,8 @@ public class UniPaintApp extends JFrame{
         if (currentLineCount<maxLineCount){
             lxy[currentLineCount][2] = e.getX();
             lxy[currentLineCount][3] = e.getY();
-           }else{            
+           }else{    
+            msgBox.append("Limit Reached\n");
            }
          canvas.repaint(); 
     }
@@ -388,30 +401,47 @@ public class UniPaintApp extends JFrame{
             lxy[currentLineCount][2] = e.getX();
             lxy[currentLineCount][3] = e.getY();
         } else {   
+            msgBox.append("Limit Reached\n");
          }
         currentLineCount++;
 
     }
   
-    public void drawRectangle(MouseEvent e) {
-       // rectangleColour[rectangleCount] = selectedColour;
-     
-        rxy[rectangleCount][0] = e.getX(); //x coordinate
-        rxy[rectangleCount][1] = e.getY();// y coordinate
-        x1=e.getX();
-        y1=e.getY();
-        rxy[rectangleCount][2] = e.getX(); //width
-        rxy[rectangleCount][3] = e.getY(); //width
-        rectangleCount++;
-    }
+//    public void drawRectangle(MouseEvent e) {
+//       // rectangleColour[rectangleCount] = selectedColour;
+//     
+//        rxy[rectangleCount][0] = e.getX(); //x coordinate
+//        rxy[rectangleCount][1] = e.getY();// y coordinate
+//        x1=e.getX();
+//        y1=e.getY();
+//        rxy[rectangleCount][2] = e.getX(); //width
+//        rxy[rectangleCount][3] = e.getY(); //width
+//        rectangleCount++;
+//    }
     
+    public void updateMsgBox(){
+        
+        switch(drawingTool){
+            case "Line":
+                break;
+            case "Rectangle":
+                break;
+            case "Circle":
+                break;
+            case "Freehand":
+                if (maxFreehandPixels>freehandPixelCount){
+                      //msgBox.setText(null);
+                      msgBox.append("Remaining Pixels: "+(maxFreehandPixels-freehandPixelCount));
+                } else {
+                    msgBox.append("You are out of pixels");      
+                }
+                break;  
+        }
+    }
 
     class FreehandSliderListener implements ChangeListener {
-
         public void stateChanged(ChangeEvent e) {
-         
-            freehandThickness = drawSize.getValue();
-         
+            freehandThickness = drawSize.getValue();        
         }
     }
 
