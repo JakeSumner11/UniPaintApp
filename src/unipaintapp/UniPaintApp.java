@@ -16,8 +16,8 @@ public class UniPaintApp extends JFrame{
     
     //colour and drawing type
     private Color selectedColour = new Color(0.0F, 0.0F, 0.0F);
- 
     private String drawingTool = "Line";
+    
     //freehand
     private final int maxFreehandPixels = 10000;
     private Color[] freehandColour = new Color[maxFreehandPixels];
@@ -27,9 +27,10 @@ public class UniPaintApp extends JFrame{
     
     //line
     private final int maxLineCount = 10;
+    private int currentLineCount= 0;
+    private Color[] lineColour = new Color[maxLineCount];
     private int[][] lxy = new int[maxLineCount][4];
-   // private int[][] lxy2 = new int[maxLineCount][2];
-    private int currentLineCount = 0;
+   
     private int pointStartX,pointStartY,pointEndX,pointEndY;
     
     //rectangle
@@ -223,13 +224,10 @@ public class UniPaintApp extends JFrame{
             g.fillRect(fxy[i][0], fxy[i][1], fxy[i][2], fxy[i][2]);
         }
         
-        //line
-//        if (lineRadioButton.isSelected() && pointStart!=null){
-//            g.drawLine(pointStart.x,pointStart.y,pointEnd.x,pointEnd.y);
-//        }
-        for (int i = 0; i < currentLineCount; i++) {
+        //line 
+        for (int i = 0; i <= currentLineCount; i++) {
+            g.setColor(lineColour[i]);
             g.drawLine(lxy[i][0], lxy[i][1], lxy[i][2], lxy[i][3]);
-    
         }
            
         //rectangle
@@ -241,8 +239,7 @@ public class UniPaintApp extends JFrame{
     class CanvasMouseMotionListener implements MouseMotionListener {
     //    @Override
         public void mouseMoved(MouseEvent e) {
-            String mousePosition = String.format("%04dpx, %04dpx", e.getX(), e.getY());
-            mousePointer.setText(mousePosition);
+            mousePointer.setText(String.format("%04dpx, %04dpx", e.getX(), e.getY()));
             switch(drawingTool){
                 case "Line":
 //                    pointEndX = e.getX();
@@ -261,12 +258,10 @@ public class UniPaintApp extends JFrame{
         public void mouseDragged(MouseEvent e) {
             switch (drawingTool) {
                 case "Line":
-                    pointEndX = e.getX();
-                    pointEndY = e.getY();
-                    drawLine(e,pointStartX,pointStartY,pointEndX,pointEndY); 
+                    drawLineDrag(e); 
                     break;
                 case "Rectangle":
-                     //drawRectangle(e);
+             
                     break;
                 case "Oval":
                     break;
@@ -284,12 +279,10 @@ public class UniPaintApp extends JFrame{
         public void mousePressed(MouseEvent e) {
             switch (drawingTool) {
                 case "Line":
-                    pointStartX = e.getX();
-                    pointStartY = e.getY();
-                    drawLine(e,pointStartX,pointStartY,pointEndX,pointEndY);
+                    drawLinePress(e,selectedColour);
                     break;
                 case "Rectangle":
-                   // drawRectangle(e);
+                  
                 case "Oval":
                     break;
                 case "Freehand":
@@ -302,11 +295,10 @@ public class UniPaintApp extends JFrame{
         public void mouseReleased(MouseEvent e) {
             switch (drawingTool) {
                 case "Line":
-                    //pointStartX = null;
-                   //drawLineA(e,pointStart);
+                   drawLineRelease(e);
                     break;
                 case "Rectangle":
-                    // drawRectangle(e);
+                 
                     break;
                 case "Oval":
                     break;
@@ -386,22 +378,40 @@ public class UniPaintApp extends JFrame{
         msgBox.append("Remaining Pixels: "+(maxFreehandPixels-freehandPixelCount));
     }
     
-    public void drawLine(MouseEvent e, int pointStartX,int pointStartY, int pointEndX, int pointEndY){
-        
-        lxy[maxLineCount][0] = pointStartX;
-        lxy[maxLineCount][1] = pointStartY;
-        lxy[maxLineCount][2] = pointEndY;
-        lxy[maxLineCount][3] = pointEndY;
-    
+    public void drawLinePress(MouseEvent e, Color selectedColour){
+        if (currentLineCount<maxLineCount){
+            lineColour[maxLineCount]= selectedColour;
+            lxy[maxLineCount][0] = e.getX();
+            lxy[maxLineCount][1] = e.getY();
+        } else{
+          
+        }
+     
     }
     
-//      public void drawLineB(MouseEvent e, int pointEndX,int pointEndY){
-//        lxy2[maxLineCount][0] = pointEndX;
-//        lxy2[maxLineCount][1] = pointEndY;
-//
-//    }
     
-      
+    public void drawLineDrag(MouseEvent e){
+        if (currentLineCount<maxLineCount){
+            lxy[maxLineCount][2] = e.getX();
+            lxy[maxLineCount][3] = e.getY();
+           }else{
+               
+           }
+         canvas.repaint(); 
+
+    }
+        
+    public void drawLineRelease(MouseEvent e){
+        if (currentLineCount<maxLineCount){
+            lxy[maxLineCount][2] = e.getX();
+            lxy[maxLineCount][3] = e.getY();
+        } else {
+            
+         }
+        currentLineCount++;
+
+    }
+  
     public void drawRectangle(MouseEvent e) {
        // rectangleColour[rectangleCount] = selectedColour;
      
