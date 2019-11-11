@@ -240,19 +240,6 @@ public class UniPaintApp extends JFrame{
     //    @Override
         public void mouseMoved(MouseEvent e) {
             mousePointer.setText(String.format("%04dpx, %04dpx", e.getX(), e.getY()));
-            switch(drawingTool){
-                case "Line":
-//                    pointEndX = e.getX();
-//                    pointEndY = e.getY();
-//                    drawLineB(e,pointEndX,pointEndY); 
-                    break;
-                case "Rectangle":
-                    break;
-                case "Circle":
-                    break;
-                case "Freehand":
-                    break;
-            }
         }
     //    @Override
         public void mouseDragged(MouseEvent e) {
@@ -364,7 +351,7 @@ public class UniPaintApp extends JFrame{
         public void actionPerformed(ActionEvent e) {
             canvas.repaint();
             freehandPixelCount = 0;
-            rectangleCount = 0;
+            currentLineCount = 0;
         }
     }
 
@@ -381,32 +368,26 @@ public class UniPaintApp extends JFrame{
     public void drawLinePress(MouseEvent e, Color selectedColour){
         if (currentLineCount<maxLineCount){
             lineColour[maxLineCount]= selectedColour;
-            lxy[maxLineCount][0] = e.getX();
-            lxy[maxLineCount][1] = e.getY();
+            lxy[currentLineCount][0] = e.getX();
+            lxy[currentLineCount][1] = e.getY();
         } else{
-          
         }
-     
     }
-    
-    
+ 
     public void drawLineDrag(MouseEvent e){
         if (currentLineCount<maxLineCount){
-            lxy[maxLineCount][2] = e.getX();
-            lxy[maxLineCount][3] = e.getY();
-           }else{
-               
+            lxy[currentLineCount][2] = e.getX();
+            lxy[currentLineCount][3] = e.getY();
+           }else{            
            }
          canvas.repaint(); 
-
     }
         
     public void drawLineRelease(MouseEvent e){
         if (currentLineCount<maxLineCount){
-            lxy[maxLineCount][2] = e.getX();
-            lxy[maxLineCount][3] = e.getY();
-        } else {
-            
+            lxy[currentLineCount][2] = e.getX();
+            lxy[currentLineCount][3] = e.getY();
+        } else {   
          }
         currentLineCount++;
 
