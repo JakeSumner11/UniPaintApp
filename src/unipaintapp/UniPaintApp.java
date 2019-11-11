@@ -20,9 +20,9 @@ public class UniPaintApp extends JFrame {
 
     //freehand
     private final int maxFreehandPixels = 10000;
+    private int freehandPixelCount = 0;
     private Color[] freehandColour = new Color[maxFreehandPixels];
     private int[][] fxy = new int[maxFreehandPixels][3];
-    private int freehandPixelCount = 0;
     private int freehandThickness = 10;
 
     //line
@@ -32,10 +32,10 @@ public class UniPaintApp extends JFrame {
     private int[][] lxy = new int[maxLineCount][4];
 
     //rectangle
-    private final int maxRectanglesCount = 10;
-    private Color[] rectangleColour = new Color[maxRectanglesCount];
-    private int[][] rxy = new int[maxRectanglesCount][4];
+    private final int maxRectangleCount = 10;
     private int currentRectangleCount = 0;
+    private Color[] rectangleColour = new Color[maxRectangleCount];
+    private int[][] rxy = new int[maxRectangleCount][4];
 
     private Canvas canvas;
     private JPanel ctrlPanel;
@@ -70,9 +70,9 @@ public class UniPaintApp extends JFrame {
                     drawLineDrag(e);
                     break;
                 case "Rectangle":
-
+                    drawRectangleDrag(e);
                     break;
-                case "Oval":
+                case "Circle":
                     break;
                 case "Freehand":
                     drawFreehand(e, freehandThickness, selectedColour);
@@ -91,8 +91,9 @@ public class UniPaintApp extends JFrame {
                     drawLinePress(e, selectedColour);
                     break;
                 case "Rectangle":
+                    drawRectanglePress(e,selectedColour);
 
-                case "Oval":
+                case "Circle":
                     break;
                 case "Freehand":
                     drawFreehand(e, freehandThickness, selectedColour);
@@ -107,9 +108,9 @@ public class UniPaintApp extends JFrame {
                     drawLineRelease(e);
                     break;
                 case "Rectangle":
-
+                    drawRectangleRelease(e);
                     break;
-                case "Oval":
+                case "Circle":
                     break;
                 case "Freehand":
 
@@ -206,7 +207,7 @@ public class UniPaintApp extends JFrame {
 
     }
 
-    //requires exception handling
+    //line (requires exception handling)
     public void drawLinePress(MouseEvent e, Color selectedColour) {
         if (currentLineCount < maxLineCount) {
             lineColour[currentLineCount] = selectedColour;
@@ -235,20 +236,38 @@ public class UniPaintApp extends JFrame {
             msgBox.append("Limit Reached\n");
         }
         currentLineCount++;
-
     }
 
-//    public void drawRectangle(MouseEvent e) {
-//       // rectangleColour[rectangleCount] = selectedColour;
-//     
-//        rxy[rectangleCount][0] = e.getX(); //x coordinate
-//        rxy[rectangleCount][1] = e.getY();// y coordinate
-//        x1=e.getX();
-//        y1=e.getY();
-//        rxy[rectangleCount][2] = e.getX(); //width
-//        rxy[rectangleCount][3] = e.getY(); //width
-//        rectangleCount++;
-//    }
+    //rectangle
+    public void drawRectanglePress(MouseEvent e, Color selectedColour) {
+        if (currentRectangleCount < maxRectangleCount) {
+            rectangleColour[currentRectangleCount] = selectedColour;
+            rxy[currentRectangleCount][0] = e.getX();
+            rxy[currentRectangleCount][1] = e.getY();
+        } else {
+            msgBox.append("Limit Reached\n");
+        }
+    }
+
+    public void drawRectangleDrag(MouseEvent e) {
+        if (currentRectangleCount < maxRectangleCount) {
+            rxy[currentRectangleCount][2] = e.getX();
+            rxy[currentRectangleCount][3] = e.getY();
+        } else {
+            msgBox.append("Limit Reached\n");
+        }
+    }
+
+    public void drawRectangleRelease(MouseEvent e) {
+        if (currentRectangleCount < maxRectangleCount) {
+            rxy[currentRectangleCount][2] = e.getX();
+            rxy[currentRectangleCount][3] = e.getY();
+        } else {
+            msgBox.append("Limit Reached\n");
+        }
+    }
+
+
     public void updateMsgBox() {
         msgBox.setText(null);
         switch (drawingTool) {
@@ -269,7 +288,7 @@ public class UniPaintApp extends JFrame {
                 }
                 break;
         }
-        
+
     }
 
     public void fineBoxDisplay(Graphics g) {
@@ -458,12 +477,13 @@ public class UniPaintApp extends JFrame {
 
         //rectangle
         for (int i = 0; i < currentRectangleCount; i++) {
+            g.setColor(rectangleColour[i]);
             g.drawRect(rxy[i][0], rxy[i][1], rxy[i][2], rxy[i][3]);
         }
     }
 
     public static void main(String[] args) {
-        UniPaintApp framePanels = new UniPaintApp();
+        UniPaintApp UniPaintApplication = new UniPaintApp();
 
     }
 
