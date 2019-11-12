@@ -67,7 +67,7 @@ public class UniPaintApp extends JFrame {
         //    @Override
 
         public void mouseMoved(MouseEvent e) {
-            mousePosition.setText(String.format("%04dpx, %04dpx", e.getX(), e.getY()));
+            updateMousePosition(e);
         }
         //    @Override
 
@@ -281,6 +281,7 @@ public class UniPaintApp extends JFrame {
         if (currentRectangleCount < maxRectangleCount) {
             rxy[currentRectangleCount][2] = (e.getX() - rxy[currentRectangleCount][0]);
             rxy[currentRectangleCount][3] = (e.getY() - rxy[currentRectangleCount][1]);
+        }else{
             msgBox.append("Limit Reached\n");
         }
         currentRectangleCount++;
@@ -316,12 +317,10 @@ public class UniPaintApp extends JFrame {
         }
         currentCircleCount++;
     }
-    
-    
-    
-    
-    
-
+    public void updateMousePosition(MouseEvent e){
+        mousePosition.setText(String.format("%01dpx, %01dpx", e.getX(), e.getY()));
+    }
+            
     public void updateMsgBox() {
         msgBox.setText(null);
         switch (drawingTool) {
