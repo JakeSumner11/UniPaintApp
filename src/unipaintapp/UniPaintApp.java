@@ -36,7 +36,14 @@ public class UniPaintApp extends JFrame {
     private int currentRectangleCount = 0;
     private Color[] rectangleColour = new Color[maxRectangleCount];
     private int[][] rxy = new int[maxRectangleCount][4];
+    
+    //circle
+    private final int maxCircleCount = 10;
+    private int currentCircleCount = 0;
+    private Color[] circleColour = new Color[maxCircleCount];
+    private int[][] cxy = new int[maxCircleCount][4];
 
+    //drawingApp variables 
     private Canvas canvas;
     private JPanel ctrlPanel;
     private JTextArea msgBox;
@@ -44,7 +51,7 @@ public class UniPaintApp extends JFrame {
 
     private JButton colourButton, clearButton, animateButton;
     private JRadioButton lineRadioButton, rectangleRadioButton, circleRadioButton, freehandRadioButton;
-    private JLabel mousePointer;
+    private JLabel mousePosition;
     private JCheckBox coarseCheckBox, fineCheckBox;
     private JSlider drawSize;
 
@@ -60,7 +67,7 @@ public class UniPaintApp extends JFrame {
         //    @Override
 
         public void mouseMoved(MouseEvent e) {
-            mousePointer.setText(String.format("%04dpx, %04dpx", e.getX(), e.getY()));
+            mousePosition.setText(String.format("%04dpx, %04dpx", e.getX(), e.getY()));
         }
         //    @Override
 
@@ -73,6 +80,7 @@ public class UniPaintApp extends JFrame {
                     drawRectangleDrag(e);
                     break;
                 case "Circle":
+                    drawCircleDrag(e);
                     break;
                 case "Freehand":
                     drawFreehand(e, freehandThickness, selectedColour);
@@ -91,9 +99,9 @@ public class UniPaintApp extends JFrame {
                     drawLinePress(e, selectedColour);
                     break;
                 case "Rectangle":
-                    drawRectanglePress(e,selectedColour);
-
+                    drawRectanglePress(e, selectedColour);
                 case "Circle":
+                    drawCirclePress(e, selectedColour);
                     break;
                 case "Freehand":
                     drawFreehand(e, freehandThickness, selectedColour);
@@ -111,6 +119,7 @@ public class UniPaintApp extends JFrame {
                     drawRectangleRelease(e);
                     break;
                 case "Circle":
+                    drawCircleRelease(e);
                     break;
                 case "Freehand":
 
@@ -181,6 +190,14 @@ public class UniPaintApp extends JFrame {
             lxy = new int[maxLineCount][4];
             currentLineCount = 0;
 
+            rxy = null;
+            rxy = new int[maxLineCount][4];
+            currentRectangleCount = 0;
+            
+            cxy = null;
+            cxy = new int[maxCircleCount][4];
+            currentCircleCount = 0;
+
             fxy = null;
             fxy = new int[maxFreehandPixels][3];
             freehandPixelCount = 0;
@@ -250,23 +267,60 @@ public class UniPaintApp extends JFrame {
     }
 
     public void drawRectangleDrag(MouseEvent e) {
+
         if (currentRectangleCount < maxRectangleCount) {
-            rxy[currentRectangleCount][2] = e.getX();
-            rxy[currentRectangleCount][3] = e.getY();
+            rxy[currentRectangleCount][2] = (e.getX() - rxy[currentRectangleCount][0]);
+            rxy[currentRectangleCount][3] = (e.getY() - rxy[currentRectangleCount][1]);
         } else {
             msgBox.append("Limit Reached\n");
         }
+        canvas.repaint();
     }
 
     public void drawRectangleRelease(MouseEvent e) {
         if (currentRectangleCount < maxRectangleCount) {
-            rxy[currentRectangleCount][2] = e.getX();
-            rxy[currentRectangleCount][3] = e.getY();
+            rxy[currentRectangleCount][2] = (e.getX() - rxy[currentRectangleCount][0]);
+            rxy[currentRectangleCount][3] = (e.getY() - rxy[currentRectangleCount][1]);
+            msgBox.append("Limit Reached\n");
+        }
+        currentRectangleCount++;
+    }
+    
+    //circle
+    public void drawCirclePress(MouseEvent e, Color selectedColour) {
+        if (currentCircleCount < maxCircleCount) {
+            circleColour[currentCircleCount] = selectedColour;
+            cxy[currentCircleCount][0] = e.getX();
+            cxy[currentCircleCount][1] = e.getY();
         } else {
             msgBox.append("Limit Reached\n");
         }
     }
 
+     public void drawCircleDrag(MouseEvent e) {
+        if (currentCircleCount < maxCircleCount) {
+            cxy[currentCircleCount][2] = (e.getX()- cxy[currentCircleCount][0]);
+            cxy[currentCircleCount][3] = (e.getY()- cxy[currentCircleCount][1]);
+        } else {
+            msgBox.append("Limit Reached\n");
+        }
+        canvas.repaint();
+    }
+
+     public void drawCircleRelease(MouseEvent e) {
+        if (currentCircleCount < maxCircleCount) {
+            cxy[currentCircleCount][2] = (e.getX() - cxy[currentCircleCount][0]);
+            cxy[currentCircleCount][3] = (e.getY() - cxy[currentCircleCount][1]);
+        } else {
+            msgBox.append("Limit Reached\n");
+        }
+        currentCircleCount++;
+    }
+    
+    
+    
+    
+    
 
     public void updateMsgBox() {
         msgBox.setText(null);
@@ -288,7 +342,6 @@ public class UniPaintApp extends JFrame {
                 }
                 break;
         }
-
     }
 
     public void fineBoxDisplay(Graphics g) {
@@ -341,12 +394,12 @@ public class UniPaintApp extends JFrame {
         ctrlPanel.setPreferredSize(new Dimension(ctrlPanelWidth, 100));
 
         //Drawing position label
-        JPanel coordinatesPointer = new JPanel();
-        coordinatesPointer.setBorder(new TitledBorder(new EtchedBorder(), "Drawing Position"));
-        coordinatesPointer.setPreferredSize(new Dimension(ctrlPanelWidth - 50, 60));
-        mousePointer = new JLabel();
-        coordinatesPointer.add(mousePointer);
-        ctrlPanel.add(coordinatesPointer);
+        JPanel coordinatesPanel = new JPanel();
+        coordinatesPanel.setBorder(new TitledBorder(new EtchedBorder(), "Drawing Position"));
+        coordinatesPanel.setPreferredSize(new Dimension(ctrlPanelWidth - 50, 60));
+        mousePosition = new JLabel();
+        coordinatesPanel.add(mousePosition);
+        ctrlPanel.add(coordinatesPanel);
 
         //drawing tool radio buttons
         JPanel drawingToolsPanel = new JPanel();
@@ -476,9 +529,15 @@ public class UniPaintApp extends JFrame {
         }
 
         //rectangle
-        for (int i = 0; i < currentRectangleCount; i++) {
+        for (int i = 0; i <= currentRectangleCount; i++) {
             g.setColor(rectangleColour[i]);
             g.drawRect(rxy[i][0], rxy[i][1], rxy[i][2], rxy[i][3]);
+        }
+        
+        //circle
+        for(int i=0;i <= currentCircleCount;i++){
+            g.setColor(circleColour[i]);
+            g.drawOval(cxy[i][0],cxy[i][1],cxy[i][2],cxy[i][3]);
         }
     }
 
