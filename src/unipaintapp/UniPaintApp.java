@@ -57,6 +57,7 @@ public class UniPaintApp extends JFrame {
 
     class Canvas extends JPanel {
 
+        @Override
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
             draw(g);
@@ -64,13 +65,13 @@ public class UniPaintApp extends JFrame {
     }
 
     class CanvasMouseMotionListener implements MouseMotionListener {
-        //    @Override
+        @Override
 
         public void mouseMoved(MouseEvent e) {
             updateMousePosition(e);
         }
-        //    @Override
-
+        
+        @Override
         public void mouseDragged(MouseEvent e) {
             switch (drawingTool) {
                 case "Line":
@@ -92,7 +93,7 @@ public class UniPaintApp extends JFrame {
     }
 
     class CanvasMouseListener implements MouseListener {
-
+        @Override
         public void mousePressed(MouseEvent e) {
             switch (drawingTool) {
                 case "Line":
@@ -109,7 +110,8 @@ public class UniPaintApp extends JFrame {
                     break;
             }
         }
-
+        
+        @Override
         public void mouseReleased(MouseEvent e) {
             switch (drawingTool) {
                 case "Line":
@@ -127,14 +129,17 @@ public class UniPaintApp extends JFrame {
             }
         }
 
+        @Override
         public void mouseClicked(MouseEvent e) {
 
         }
 
+        @Override
         public void mouseEntered(MouseEvent e) {
 
         }
 
+        @Override
         public void mouseExited(MouseEvent e) {
 
         }
@@ -142,14 +147,15 @@ public class UniPaintApp extends JFrame {
 
     class MyCheckBoxListener implements ChangeListener {
 
+        @Override
         public void stateChanged(ChangeEvent e) {
             canvas.repaint();
         }
     }
 
     class RadioButtonListener implements ActionListener {
-        //     @Override
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             updateMsgBox();
             if (lineRadioButton.isSelected()) {
@@ -172,6 +178,7 @@ public class UniPaintApp extends JFrame {
     class ButtonListener implements ActionListener {
 
         //@Override
+        @Override
         public void actionPerformed(ActionEvent e) {
             JColorChooser colourPicker = new JColorChooser(selectedColour);
             Color newColour = colourPicker.showDialog(null, "Choose new Drawing colour", selectedColour);
@@ -183,7 +190,7 @@ public class UniPaintApp extends JFrame {
 
     class ClearButtonListener implements ActionListener {
 
-        //@Override
+        @Override
         public void actionPerformed(ActionEvent e) {
 
             lxy = null;
@@ -209,6 +216,7 @@ public class UniPaintApp extends JFrame {
 
     class FreehandSliderListener implements ChangeListener {
 
+        @Override
         public void stateChanged(ChangeEvent e) {
             freehandThickness = drawSize.getValue();
         }
