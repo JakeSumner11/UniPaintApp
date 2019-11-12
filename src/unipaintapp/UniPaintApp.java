@@ -177,7 +177,6 @@ public class UniPaintApp extends JFrame {
 
     class ButtonListener implements ActionListener {
 
-        //@Override
         @Override
         public void actionPerformed(ActionEvent e) {
             JColorChooser colourPicker = new JColorChooser(selectedColour);
