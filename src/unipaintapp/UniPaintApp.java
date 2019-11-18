@@ -7,6 +7,8 @@ import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
 
+import java.io.*;
+
 public class UniPaintApp extends JFrame {
 
     //variables 
@@ -36,7 +38,7 @@ public class UniPaintApp extends JFrame {
     private int currentRectangleCount = 0;
     private Color[] rectangleColour = new Color[maxRectangleCount];
     private int[][] rxy = new int[maxRectangleCount][4];
-    
+
     //circle
     private final int maxCircleCount = 10;
     private int currentCircleCount = 0;
@@ -65,12 +67,13 @@ public class UniPaintApp extends JFrame {
     }
 
     class CanvasMouseMotionListener implements MouseMotionListener {
+
         @Override
 
         public void mouseMoved(MouseEvent e) {
             updateMousePosition(e);
         }
-        
+
         @Override
         public void mouseDragged(MouseEvent e) {
             switch (drawingTool) {
@@ -93,6 +96,7 @@ public class UniPaintApp extends JFrame {
     }
 
     class CanvasMouseListener implements MouseListener {
+
         @Override
         public void mousePressed(MouseEvent e) {
             switch (drawingTool) {
@@ -110,7 +114,7 @@ public class UniPaintApp extends JFrame {
                     break;
             }
         }
-        
+
         @Override
         public void mouseReleased(MouseEvent e) {
             switch (drawingTool) {
@@ -199,7 +203,7 @@ public class UniPaintApp extends JFrame {
             rxy = null;
             rxy = new int[maxLineCount][4];
             currentRectangleCount = 0;
-            
+
             cxy = null;
             cxy = new int[maxCircleCount][4];
             currentCircleCount = 0;
@@ -213,11 +217,49 @@ public class UniPaintApp extends JFrame {
         }
     }
 
+    //COMPLETE FOR SAVE AND LOAD
     class FreehandSliderListener implements ChangeListener {
 
         @Override
         public void stateChanged(ChangeEvent e) {
             freehandThickness = drawSize.getValue();
+        }
+    }
+
+    class FileSaveListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+//            FileOutputStream fos = new FileOutputStream(UniPaintApp);
+//            ObjectOutputStream fh = new ObjectOutputStream(fos);
+//            fh.writeInt(currentLineCount);
+
+        }
+    }
+
+    class FileLoadListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            updateMsgBox();
+            msgBox.append("Load");
+
+        }
+    }
+
+    class FileExitListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            System.exit(0);
+        }
+    }
+
+    class HelpAboutListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JOptionPane.showMessageDialog(canvas, "A simple Drawing Application\nBy Jake Sumner\n\nVersion: 3  Date created: 2019");
         }
     }
 
@@ -288,12 +330,12 @@ public class UniPaintApp extends JFrame {
         if (currentRectangleCount < maxRectangleCount) {
             rxy[currentRectangleCount][2] = (e.getX() - rxy[currentRectangleCount][0]);
             rxy[currentRectangleCount][3] = (e.getY() - rxy[currentRectangleCount][1]);
-        }else{
+        } else {
             msgBox.append("Limit Reached\n");
         }
         currentRectangleCount++;
     }
-    
+
     //circle
     public void drawCirclePress(MouseEvent e, Color selectedColour) {
         if (currentCircleCount < maxCircleCount) {
@@ -305,17 +347,17 @@ public class UniPaintApp extends JFrame {
         }
     }
 
-     public void drawCircleDrag(MouseEvent e) {
+    public void drawCircleDrag(MouseEvent e) {
         if (currentCircleCount < maxCircleCount) {
-            cxy[currentCircleCount][2] = (e.getX()- cxy[currentCircleCount][0]);
-            cxy[currentCircleCount][3] = (e.getY()- cxy[currentCircleCount][1]);
+            cxy[currentCircleCount][2] = (e.getX() - cxy[currentCircleCount][0]);
+            cxy[currentCircleCount][3] = (e.getY() - cxy[currentCircleCount][1]);
         } else {
             msgBox.append("Limit Reached\n");
         }
         canvas.repaint();
     }
 
-     public void drawCircleRelease(MouseEvent e) {
+    public void drawCircleRelease(MouseEvent e) {
         if (currentCircleCount < maxCircleCount) {
             cxy[currentCircleCount][2] = (e.getX() - cxy[currentCircleCount][0]);
             cxy[currentCircleCount][3] = (e.getY() - cxy[currentCircleCount][1]);
@@ -324,10 +366,11 @@ public class UniPaintApp extends JFrame {
         }
         currentCircleCount++;
     }
-    public void updateMousePosition(MouseEvent e){
+
+    public void updateMousePosition(MouseEvent e) {
         mousePosition.setText(String.format("%01dpx, %01dpx", e.getX(), e.getY()));
     }
-            
+
     public void updateMsgBox() {
         msgBox.setText(null);
         switch (drawingTool) {
@@ -496,13 +539,18 @@ public class UniPaintApp extends JFrame {
         JMenuItem fileSaveMenuItem = new JMenuItem("Save");
         JMenuItem fileLoadMenuItem = new JMenuItem("Load");
         JMenuItem fileExitMenuItem = new JMenuItem("Exit");
+        fileSaveMenuItem.addActionListener(new FileSaveListener());
+        fileLoadMenuItem.addActionListener(new FileLoadListener());
+        fileExitMenuItem.addActionListener(new FileExitListener());
         fileBar.add(fileSaveMenuItem);
         fileBar.add(fileLoadMenuItem);
         fileBar.add(fileExitMenuItem);
         menuBar.add(fileBar);
+
         //help
         JMenu helpBar = new JMenu("Help");
         JMenuItem helpAboutMenuItem = new JMenuItem("About");
+        helpAboutMenuItem.addActionListener(new HelpAboutListener());
         helpBar.add(helpAboutMenuItem);
         menuBar.add(helpBar);
 
@@ -539,11 +587,11 @@ public class UniPaintApp extends JFrame {
             g.setColor(rectangleColour[i]);
             g.drawRect(rxy[i][0], rxy[i][1], rxy[i][2], rxy[i][3]);
         }
-        
+
         //circle
-        for(int i=0;i <= currentCircleCount;i++){
+        for (int i = 0; i <= currentCircleCount; i++) {
             g.setColor(circleColour[i]);
-            g.drawOval(cxy[i][0],cxy[i][1],cxy[i][2],cxy[i][3]);
+            g.drawOval(cxy[i][0], cxy[i][1], cxy[i][2], cxy[i][3]);
         }
     }
 
