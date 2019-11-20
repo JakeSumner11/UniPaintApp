@@ -7,8 +7,6 @@ import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
 
-import java.io.*;
-
 public class UniPaintApp extends JFrame {
 
     //variables 
@@ -45,17 +43,9 @@ public class UniPaintApp extends JFrame {
     private Color[] circleColour = new Color[maxCircleCount];
     private int[][] cxy = new int[maxCircleCount][4];
 
-    //drawingApp variables 
-    private Canvas canvas;
-    private JPanel ctrlPanel;
-    private JTextArea msgBox;
-    private JMenuBar menuBar;
-
-    private JButton colourButton, clearButton, animateButton;
-    private JRadioButton lineRadioButton, rectangleRadioButton, circleRadioButton, freehandRadioButton;
-    private JLabel mousePosition;
-    private JCheckBox coarseCheckBox, fineCheckBox;
-    private JSlider drawSize;
+    //Animators
+    MyAnimationClass animator = new MyAnimationClass();
+    Timer animationTimer = new Timer(1, animator);
 
     class Canvas extends JPanel {
 
@@ -135,17 +125,14 @@ public class UniPaintApp extends JFrame {
 
         @Override
         public void mouseClicked(MouseEvent e) {
-
         }
 
         @Override
         public void mouseEntered(MouseEvent e) {
-
         }
 
         @Override
         public void mouseExited(MouseEvent e) {
-
         }
     }
 
@@ -179,7 +166,7 @@ public class UniPaintApp extends JFrame {
         }
     }
 
-    class ButtonListener implements ActionListener {
+    class ColourButtonListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -195,6 +182,10 @@ public class UniPaintApp extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            if (animationTimer.isRunning()) {
+                animationTimer.stop();
+                animateButton.setText("Animate");
+            }
 
             lxy = null;
             lxy = new int[maxLineCount][4];
@@ -214,6 +205,55 @@ public class UniPaintApp extends JFrame {
 
             updateMsgBox();
             canvas.repaint();
+        }
+    }
+
+    class MyAnimationClass implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            updateMsgBox();
+            if (currentCircleCount > 0) {
+                msgBox.append("Animation Occuring");
+                cxy[currentCircleCount - 1][1]++;
+                Bounce();
+                canvas.repaint();
+            }
+        }
+    }
+
+    public void Bounce() {
+        if (((cxy[currentCircleCount - 1][1])) < canvas.getHeight()) {
+            cxy[currentCircleCount - 1][1]++;
+        } else {
+            cxy[currentCircleCount - 1][1]--;
+        }
+    }
+
+    class AnimateButtonListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            if (animationTimer.isRunning()) {
+                animationTimer.stop();
+            } else {
+                animationTimer.start();
+            }
+        }
+
+    }
+
+    class AnimateButtonChangeListener implements ChangeListener {
+
+        @Override
+        public void stateChanged(ChangeEvent e) {
+
+            if (animationTimer.isRunning()) {
+                animateButton.setText("Stop Animating");
+            } else {
+                animateButton.setText("Animate");
+            }
         }
     }
 
@@ -345,6 +385,7 @@ public class UniPaintApp extends JFrame {
         } else {
             msgBox.append("Limit Reached\n");
         }
+        //      animationTimer.stop();
     }
 
     public void drawCircleDrag(MouseEvent e) {
@@ -367,6 +408,13 @@ public class UniPaintApp extends JFrame {
         currentCircleCount++;
     }
 
+//    public Boolean CircleInBounds(MouseEvent e) {
+//    
+//        if (( (e.getX()- cxy[currentCircleCount][0])>=0) && ((e.getY()- cxy[currentCircleCount][1])<=0)) {
+//            return true;
+//        }
+//      
+//    }
     public void updateMousePosition(MouseEvent e) {
         mousePosition.setText(String.format("%01dpx, %01dpx", e.getX(), e.getY()));
     }
@@ -422,6 +470,18 @@ public class UniPaintApp extends JFrame {
         }
 
     }
+
+    //drawingApp variables 
+    private Canvas canvas;
+    private JPanel ctrlPanel;
+    private JTextArea msgBox;
+    private JMenuBar menuBar;
+
+    private JButton colourButton, clearButton, animateButton;
+    private JRadioButton lineRadioButton, rectangleRadioButton, circleRadioButton, freehandRadioButton;
+    private JLabel mousePosition;
+    private JCheckBox coarseCheckBox, fineCheckBox;
+    private JSlider drawSize;
 
     public UniPaintApp() {
         setLayout(new BorderLayout());
@@ -483,7 +543,7 @@ public class UniPaintApp extends JFrame {
         colourButtonPanel.setPreferredSize(new Dimension(ctrlPanelWidth - 50, 140));
         colourButton = new JButton();
         colourButton.setPreferredSize(new Dimension(ctrlPanelWidth - 200, 100));
-        colourButton.addActionListener(new ButtonListener());
+        colourButton.addActionListener(new ColourButtonListener());
         colourButtonPanel.add(colourButton);
         ctrlPanel.add(colourButtonPanel);
 
@@ -514,12 +574,15 @@ public class UniPaintApp extends JFrame {
         checkBoxPanel.add(fineCheckBox);
         ctrlPanel.add(checkBoxPanel);
 
-        //Buttons
+        //Main Buttons
         clearButton = new JButton("Clear Canvas");
         animateButton = new JButton("Animate");
         clearButton.setPreferredSize(new Dimension(ctrlPanelWidth - 50, 60));
         animateButton.setPreferredSize(new Dimension(ctrlPanelWidth - 50, 60));
         clearButton.addActionListener(new ClearButtonListener());
+        animateButton.addActionListener(new AnimateButtonListener());
+
+        animateButton.addChangeListener(new AnimateButtonChangeListener());
         ctrlPanel.add(clearButton);
         ctrlPanel.add(animateButton);
         add(ctrlPanel, BorderLayout.LINE_START);
@@ -528,7 +591,7 @@ public class UniPaintApp extends JFrame {
         msgBox = new JTextArea();
         msgBox.setEditable(false);
         msgBox.setBorder(new TitledBorder(new EtchedBorder(), "Message Box"));
-        // msgBox.setBackground(null);
+        msgBox.setBackground(null);
         msgBox.setPreferredSize(new Dimension(200, 200));
         add(msgBox, BorderLayout.PAGE_END);
 
