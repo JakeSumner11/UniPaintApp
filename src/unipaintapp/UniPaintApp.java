@@ -216,20 +216,21 @@ public class UniPaintApp extends JFrame {
             if (currentCircleCount > 0) {
                 msgBox.append("Animation Occuring");
                 cxy[currentCircleCount - 1][1]++;
-                Bounce();
+//                Bounce();
                 canvas.repaint();
             }
         }
     }
 
-    public void Bounce() {
-        if (((cxy[currentCircleCount - 1][1])) < canvas.getHeight()) {
-            cxy[currentCircleCount - 1][1]++;
-        } else {
-            cxy[currentCircleCount - 1][1]--;
-        }
-    }
-
+//    public void Bounce() {
+//        if (((cxy[currentCircleCount - 1][1])) < canvas.getHeight()) {
+//            cxy[currentCircleCount - 1][1]++;
+//        } else {
+//
+//           if (((cxy[currentCircleCount - 1][1])) == canvas.getHeight()) {
+//          cxy[currentCircleCount - 1][1]--;
+//        }
+//    }
     class AnimateButtonListener implements ActionListener {
 
         @Override
@@ -315,33 +316,40 @@ public class UniPaintApp extends JFrame {
 
     //line (requires exception handling)
     public void drawLinePress(MouseEvent e, Color selectedColour) {
+
         if (currentLineCount < maxLineCount) {
+
             lineColour[currentLineCount] = selectedColour;
             lxy[currentLineCount][0] = e.getX();
             lxy[currentLineCount][1] = e.getY();
         } else {
-            msgBox.append("Limit Reached\n");
+            msgBox.append("Limit Reached");
         }
+
     }
 
     public void drawLineDrag(MouseEvent e) {
+
         if (currentLineCount < maxLineCount) {
             lxy[currentLineCount][2] = e.getX();
             lxy[currentLineCount][3] = e.getY();
+            canvas.repaint();
         } else {
-            msgBox.append("Limit Reached\n");
+            msgBox.append("Limit Reached");
         }
-        canvas.repaint();
+
     }
 
     public void drawLineRelease(MouseEvent e) {
+
         if (currentLineCount < maxLineCount) {
             lxy[currentLineCount][2] = e.getX();
             lxy[currentLineCount][3] = e.getY();
+            currentLineCount++;
         } else {
-            msgBox.append("Limit Reached\n");
+            msgBox.append("Limit Reached");
         }
-        currentLineCount++;
+
     }
 
     //rectangle
