@@ -215,8 +215,10 @@ public class UniPaintApp extends JFrame {
             updateMsgBox();
             if (currentCircleCount > 0) {
                 msgBox.append("Animation Occuring");
-                cxy[currentCircleCount - 1][1]++;
+                for(int i=0;i<maxCircleCount;i++){
+                cxy[i][1]++;
 //                Bounce();
+                }
                 canvas.repaint();
             }
         }
@@ -305,115 +307,128 @@ public class UniPaintApp extends JFrame {
     }
 
     public void drawFreehand(MouseEvent e, int freehandThickness, Color selectedColour) {
+        updateMsgBox();
+        if (freehandPixelCount < maxFreehandPixels-1) {
         freehandColour[freehandPixelCount] = selectedColour;
         fxy[freehandPixelCount][0] = e.getX(); //x coordinate
         fxy[freehandPixelCount][1] = e.getY();// y coordinate
         fxy[freehandPixelCount][2] = freehandThickness; //dimension
         freehandPixelCount++;
         updateMsgBox();
+        } else if (freehandPixelCount == maxFreehandPixels-1){
+            msgBox.setText("You are out of Pixels");
+        }
+        
 
     }
 
     //line (requires exception handling)
     public void drawLinePress(MouseEvent e, Color selectedColour) {
-
-        if (currentLineCount < maxLineCount) {
+        updateMsgBox();
+        if (currentLineCount < maxLineCount-1) {
 
             lineColour[currentLineCount] = selectedColour;
             lxy[currentLineCount][0] = e.getX();
             lxy[currentLineCount][1] = e.getY();
         } else {
-            msgBox.append("Limit Reached");
+            msgBox.append("Max "+drawingTool+" limit reached\n");
         }
 
     }
 
     public void drawLineDrag(MouseEvent e) {
-
-        if (currentLineCount < maxLineCount) {
+        updateMsgBox();
+        if (currentLineCount < maxLineCount-1) {
             lxy[currentLineCount][2] = e.getX();
             lxy[currentLineCount][3] = e.getY();
             canvas.repaint();
         } else {
-            msgBox.append("Limit Reached");
+            msgBox.append("Max "+drawingTool+" limit reached\n");
         }
 
     }
 
     public void drawLineRelease(MouseEvent e) {
-
-        if (currentLineCount < maxLineCount) {
+        updateMsgBox();
+        if (currentLineCount < maxLineCount-1) {
             lxy[currentLineCount][2] = e.getX();
             lxy[currentLineCount][3] = e.getY();
             currentLineCount++;
         } else {
-            msgBox.append("Limit Reached");
+            msgBox.append("Max "+drawingTool+" limit reached\n");
         }
 
     }
 
     //rectangle
     public void drawRectanglePress(MouseEvent e, Color selectedColour) {
-        if (currentRectangleCount < maxRectangleCount) {
+        updateMsgBox();
+        if (currentRectangleCount < maxRectangleCount-1) {
             rectangleColour[currentRectangleCount] = selectedColour;
             rxy[currentRectangleCount][0] = e.getX();
             rxy[currentRectangleCount][1] = e.getY();
         } else {
-            msgBox.append("Limit Reached\n");
+            msgBox.append("Max "+drawingTool+" limit reached\n");
         }
     }
 
     public void drawRectangleDrag(MouseEvent e) {
-
-        if (currentRectangleCount < maxRectangleCount) {
+        updateMsgBox();
+        if (currentRectangleCount < maxRectangleCount-1) {
             rxy[currentRectangleCount][2] = (e.getX() - rxy[currentRectangleCount][0]);
             rxy[currentRectangleCount][3] = (e.getY() - rxy[currentRectangleCount][1]);
         } else {
-            msgBox.append("Limit Reached\n");
+            msgBox.append("Max "+drawingTool+" limit reached\n");
         }
         canvas.repaint();
     }
 
     public void drawRectangleRelease(MouseEvent e) {
-        if (currentRectangleCount < maxRectangleCount) {
+        updateMsgBox();
+        if (currentRectangleCount < maxRectangleCount-1) {
             rxy[currentRectangleCount][2] = (e.getX() - rxy[currentRectangleCount][0]);
             rxy[currentRectangleCount][3] = (e.getY() - rxy[currentRectangleCount][1]);
+              currentRectangleCount++;
         } else {
-            msgBox.append("Limit Reached\n");
+            msgBox.append("Max "+drawingTool+" limit reached\n");
         }
-        currentRectangleCount++;
+      
     }
 
     //circle
     public void drawCirclePress(MouseEvent e, Color selectedColour) {
-        if (currentCircleCount < maxCircleCount) {
+        updateMsgBox();
+        if (currentCircleCount < maxCircleCount-1) {
             circleColour[currentCircleCount] = selectedColour;
             cxy[currentCircleCount][0] = e.getX();
             cxy[currentCircleCount][1] = e.getY();
         } else {
-            msgBox.append("Limit Reached\n");
+            msgBox.append("Max "+drawingTool+" limit reached\n");
         }
-        //      animationTimer.stop();
     }
 
     public void drawCircleDrag(MouseEvent e) {
-        if (currentCircleCount < maxCircleCount) {
+        updateMsgBox();
+        if (currentCircleCount < maxCircleCount-1) {
             cxy[currentCircleCount][2] = (e.getX() - cxy[currentCircleCount][0]);
             cxy[currentCircleCount][3] = (e.getY() - cxy[currentCircleCount][1]);
+            canvas.repaint();
         } else {
-            msgBox.append("Limit Reached\n");
+            msgBox.append("Max "+drawingTool+" limit reached\n");
         }
-        canvas.repaint();
+       
     }
 
     public void drawCircleRelease(MouseEvent e) {
-        if (currentCircleCount < maxCircleCount) {
+        updateMsgBox();
+        if (currentCircleCount < maxCircleCount-1) {
             cxy[currentCircleCount][2] = (e.getX() - cxy[currentCircleCount][0]);
             cxy[currentCircleCount][3] = (e.getY() - cxy[currentCircleCount][1]);
+            currentCircleCount++;
         } else {
-            msgBox.append("Limit Reached\n");
+            msgBox.append("Max "+drawingTool+" limit reached\n");
         }
-        currentCircleCount++;
+       
     }
 
 //    public Boolean CircleInBounds(MouseEvent e) {
