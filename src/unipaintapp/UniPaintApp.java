@@ -215,12 +215,16 @@ public class UniPaintApp extends JFrame {
         public void actionPerformed(ActionEvent e) {
             updateMsgBox();
             if (currentCircleCount > 0) {
-                msgBox.append("Animation Occuring");
-                for (int i = 0; i < maxCircleCount; i++) {
-                    cxy[i][1]++;
 
-//                Bounce();
+                for (int i = 0; i < maxCircleCount; i++) {
+                    if ((cxy[i][1] + cxy[i][3] <= canvas.getHeight())) {
+                        cxy[i][1]++;
+                    }
+//                    } else {
+//                        cxy[i][1]-=5;
+//                    }
                 }
+                msgBox.append("Animation Occuring");
                 canvas.repaint();
             }
 
@@ -228,15 +232,6 @@ public class UniPaintApp extends JFrame {
 
     }
 
-//    public void Bounce() {
-//        if (((cxy[currentCircleCount - 1][1])) < canvas.getHeight()) {
-//            cxy[currentCircleCount - 1][1]++;
-//        } else {
-//
-//           if (((cxy[currentCircleCount - 1][1])) == canvas.getHeight()) {
-//          cxy[currentCircleCount - 1][1]--;
-//        }
-//    }
     class AnimateButtonListener implements ActionListener {
 
         @Override
