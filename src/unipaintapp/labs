@@ -124,7 +124,7 @@ public class UniPaintApp extends JFrame {
                     drawCircleRelease(e);
                     break;
                 case "Freehand":
-                    drawFreehand(e, freehandThickness, selectedColour);
+//                    drawFreehandRelease(e);
                     break;
             }
         }
@@ -367,12 +367,21 @@ public class UniPaintApp extends JFrame {
             fxy[freehandPixelCount][1] = e.getY();// y coordinate
             fxy[freehandPixelCount][2] = freehandThickness; //dimension
             freehandPixelCount++;
+            canvas.repaint();
             updateMsgBox();
         } else if (freehandPixelCount == maxFreehandPixels - 1) {
             msgBox.setText("You are out of Pixels");
         }
-
+       
     }
+//    
+//    public void drawFreehandRelease(MouseEvent e){
+//        if(freehandPixelCount <maxFreehandPixels-1){
+//                        fxy[freehandPixelCount][0] = e.getX(); //x coordinate
+//            fxy[freehandPixelCount][1] = e.getY();// y coordinate
+// freehandPixelCount++;
+//        }
+//    }
 
     //line (requires exception handling)
     public void drawLinePress(MouseEvent e, Color selectedColour) {
